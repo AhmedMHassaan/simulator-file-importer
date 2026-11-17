@@ -4,6 +4,12 @@ Developed by [Ahmed Mohamed Hassaan](https://www.linkedin.com/in/ahmedmhassaan/)
 
 Import images from your Mac or an image URL into the Photos library of one or more running iOS simulators, using a graphical interface.
 
+## Interface example
+
+![Simulator photos importer interface showing the image URL or file path input, drag-and-drop area, and a selected iPhone 17 simulator](docs/images/simulator-photos-importer-example.png)
+
+Example with one running simulator selected. Add images, choose the destination simulators, then click **Import to Photos**. This screenshot shows an earlier build titled “Simulator Photos”; the current app is named **Simulator photos importer**.
+
 ## Why this app exists
 
 This utility addresses the workflow where the new Device Hub does not support dragging and dropping image files into a simulator. Instead, drop files into **Simulator photos importer**, select the running simulators, and import the images into their Photos libraries. You can also choose files or paste an image URL or local file path.

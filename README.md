@@ -2,6 +2,12 @@
 
 A standalone native macOS GUI for importing images into running Apple simulators’ Photos libraries. It does not use the `simphoto` shell function, need your shell configuration, or require the MOHRE app.
 
+## Interface example
+
+![Simulator photos importer interface showing the image URL or file path input, drag-and-drop area, and a selected iPhone 17 simulator](docs/images/simulator-photos-importer-example.png)
+
+Example with one running simulator selected. Add images, choose the destination simulators, then click **Import to Photos**. This screenshot shows an earlier build titled “Simulator Photos”; the current app is named **Simulator photos importer**.
+
 ## Download
 
 Download **Simulator photos importer.zip** from the [latest GitHub release](https://github.com/AhmedMHassaan/simulator-photos-importer/releases/latest). Unzip it, open the extracted folder, and move the app to Applications. The ZIP includes the app, README, and user guide. No terminal or rebuild is needed.

@@ -15,10 +15,12 @@ ditto 'build/Build/Products/Release/Simulator photos importer.app' 'dist/Simulat
 codesign --verify --deep --strict 'dist/Simulator photos importer.app'
 ditto README.md dist/README.md
 ditto USER_GUIDE.md dist/USER_GUIDE.md
+ditto docs/images dist/docs/images
 package_dir="$PWD/build/portable/Simulator photos importer"
 mkdir -p "$package_dir"
 ditto 'dist/Simulator photos importer.app' "$package_dir/Simulator photos importer.app"
 ditto README.md "$package_dir/README.md"
 ditto USER_GUIDE.md "$package_dir/USER_GUIDE.md"
+ditto docs/images "$package_dir/docs/images"
 ditto -c -k --sequesterRsrc --keepParent "$package_dir" 'dist/Simulator photos importer.zip'
 print "Ready: $PWD/dist/Simulator photos importer.app"
