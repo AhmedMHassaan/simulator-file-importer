@@ -60,6 +60,14 @@ Open `SimulatorPhotos.xcodeproj` in Xcode and build the **SimulatorPhotos** sche
 
 The test target covers URLs and paths, simulator identity, Base64 decoding, image/PDF/text validation, HTTP downloads and failures, queue deduplication, and copying documents without overwriting existing files. Set `SIMULATOR_PHOTOS_LIVE_TEST=1` in the test runner environment to additionally import images and a PDF into the first running simulator.
 
+## Contributing
+
+Contributions from all developers are welcome. Fork the repository, create a branch, and open a pull request into `main`. Read [CONTRIBUTING.md](CONTRIBUTING.md) for build/test instructions and the review process. Only [@AhmedMHassaan](https://github.com/AhmedMHassaan) may push or merge into `main`; all other developers contribute through pull requests.
+
+## License
+
+[MIT](LICENSE) · Copyright 2026 Ahmed Mohamed Hassaan.
+
 ## Developer
 
 Developed by [Ahmed Mohamed Hassaan](https://www.linkedin.com/in/ahmedmhassaan/) · LinkedIn: **@ahmedmhassaan**.

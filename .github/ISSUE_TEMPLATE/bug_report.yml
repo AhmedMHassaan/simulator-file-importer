@@ -1,0 +1,31 @@
+name: Bug report
+description: Report a reproducible import or interface problem.
+title: "[Bug]: "
+body:
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Include macOS, Xcode, and simulator model/runtime versions.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Include the input type (file, URL, or Base64) and selected simulators. Use a non-sensitive sample.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Include the error text or a screenshot, with personal information removed.
+    validations:
+      required: true
