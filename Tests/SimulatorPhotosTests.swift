@@ -240,6 +240,44 @@ final class SimulatorPhotosTests: XCTestCase {
         return try XCTUnwrap(document.dataRepresentation())
     }
 
+    func testFilesStorageLookupHandlesEmptyAndVersionSpecificResponses() throws {
+        let path = "/tmp/Simulator Files/group-container"
+        let json = try JSONSerialization.data(withJSONObject: ["group.com.apple.FileProvider.LocalStorage": path])
+        XCTAssertEqual(FilesService.localStoragePath(from: json), path)
+        let text = Data("group.com.apple.FileProvider.LocalStorage\t\(path)\n".utf8)
+        XCTAssertEqual(FilesService.localStoragePath(from: text), path)
+        XCTAssertNil(FilesService.localStoragePath(from: Data("{}".utf8)))
+        XCTAssertNil(FilesService.localStoragePath(from: Data("group.other\t/tmp/other".utf8)))
+        let invalid = try JSONSerialization.data(withJSONObject: ["group.com.apple.FileProvider.LocalStorage": "relative/path"])
+        XCTAssertNil(FilesService.localStoragePath(from: invalid))
+    }
+
+    @MainActor
+    func testLiveImportUsesOnlySelectedSimulatorsAndSupportsMultipleDestinations() async throws {
+        guard ProcessInfo.processInfo.environment["SIMULATOR_PHOTOS_LIVE_TEST"] == "1" else {
+            throw XCTSkip("Set SIMULATOR_PHOTOS_LIVE_TEST=1 for simulator integration tests")
+        }
+        let model = PhotoModel()
+        await model.refresh()
+        XCTAssertNil(model.error)
+        XCTAssertGreaterThanOrEqual(model.devices.count, 2, "Boot two simulators to verify multiple destinations")
+        guard let first = model.devices.first else { return XCTFail("No running simulator") }
+        model.input = "data:text/plain;base64," + Data("Simulator File Importer selection test".utf8).base64EncodedString()
+        model.addInput()
+        model.selected = [first.id]
+        await model.importPhotos()
+        XCTAssertEqual(model.results.count, 1)
+        XCTAssertTrue(model.results.allSatisfy(\.succeeded), model.results.map(\.detail).joined(separator: "\n"))
+        XCTAssertTrue(model.results.first?.detail.contains(String(first.id.prefix(8))) == true)
+        model.selected = Set(model.devices.map(\.id))
+        await model.importPhotos()
+        XCTAssertEqual(model.results.count, model.devices.count)
+        XCTAssertTrue(model.results.allSatisfy(\.succeeded), model.results.map(\.detail).joined(separator: "\n"))
+        for device in model.devices {
+            XCTAssertTrue(model.results.contains { $0.detail.contains(String(device.id.prefix(8))) })
+        }
+    }
+
     private func base64Example() throws -> String {
         let url = try XCTUnwrap(Bundle(for: SimulatorPhotosTests.self).url(forResource: "base64-example", withExtension: "txt"))
         return try String(contentsOf: url, encoding: .utf8)

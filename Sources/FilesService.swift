@@ -3,27 +3,18 @@ import Foundation
 enum FilesService {
     static func downloadsDirectory(for device: SimulatorDevice) async throws -> URL {
         let command = ["simctl", "get_app_container", device.id, "com.apple.DocumentsApp", "groups"]
-        let output: Data
-        do {
-            output = try await AppleTool.run(command)
-        } catch {
-            // The local Files provider may not have a container until Files has been launched once.
+        var path = (try? await AppleTool.run(command)).flatMap { localStoragePath(from: $0) }
+        if path == nil {
+            // A successful groups query can still be empty before Files has been launched once.
             _ = try await AppleTool.run(["simctl", "launch", device.id, "com.apple.DocumentsApp"])
-            output = try await AppleTool.run(command)
+            for _ in 0..<10 {
+                path = localStoragePath(from: try await AppleTool.run(command))
+                if path != nil { break }
+                try await Task.sleep(nanoseconds: 200_000_000)
+            }
         }
-        let text = String(decoding: output, as: UTF8.self)
-        let group = "group.com.apple.FileProvider.LocalStorage"
-        let path: String
-        if let groups = try? JSONSerialization.jsonObject(with: output) as? [String: String], let value = groups[group] {
-            path = value
-        } else if let line = text.components(separatedBy: .newlines).first(where: { $0.contains(group) }),
-                  let slash = line.firstIndex(of: "/") {
-            path = String(line[slash...]).trimmingCharacters(in: CharacterSet.whitespacesAndNewlines.union(CharacterSet(charactersIn: "\";,")))
-        } else {
-            throw PhotoError.message("The simulator's local Files provider is not available. Open Files → Browse → On My iPhone/iPad once, then retry.")
-        }
-        guard path.hasPrefix("/"), !path.contains("\n"), FileManager.default.fileExists(atPath: path) else {
-            throw PhotoError.message("Cannot locate the simulator's shared Files storage. Open Files in this simulator once, then retry.")
+        guard let path, FileManager.default.fileExists(atPath: path) else {
+            throw PhotoError.message("Cannot locate the simulator's shared Files storage. Open Files → Browse → On My iPhone/iPad once, then retry.")
         }
         let storage = URL(fileURLWithPath: path).appendingPathComponent("File Provider Storage", isDirectory: true)
         let downloads = storage.appendingPathComponent("Downloads", isDirectory: true)
@@ -32,6 +23,21 @@ enum FilesService {
         }
         try FileManager.default.createDirectory(at: downloads, withIntermediateDirectories: true)
         return downloads
+    }
+
+    static func localStoragePath(from output: Data) -> String? {
+        let group = "group.com.apple.FileProvider.LocalStorage"
+        let text = String(decoding: output, as: UTF8.self)
+        let path: String
+        if let groups = try? JSONSerialization.jsonObject(with: output) as? [String: String], let value = groups[group] {
+            path = value
+        } else if let line = text.components(separatedBy: .newlines).first(where: { $0.contains(group) }),
+                  let slash = line.firstIndex(of: "/") {
+            path = String(line[slash...]).trimmingCharacters(in: CharacterSet.whitespacesAndNewlines.union(CharacterSet(charactersIn: "\";,")))
+        } else {
+            return nil
+        }
+        return path.hasPrefix("/") && !path.contains("\n") ? path : nil
     }
 
     static func availableDestination(in directory: URL, named name: String, extension ext: String) -> URL {
