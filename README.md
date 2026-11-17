@@ -1,62 +1,65 @@
-# Simulator photos importer
+# Simulator File Importer
 
-A standalone native macOS GUI for importing images into running Apple simulators’ Photos libraries. It does not use the `simphoto` shell function, need your shell configuration, or require the MOHRE app.
-
-## Interface example
-
-![Simulator photos importer interface showing the image URL or file path input, drag-and-drop area, and a selected iPhone 17 simulator](docs/images/simulator-photos-importer-example.png)
-
-Example with one running simulator selected. Add images, choose the destination simulators, then click **Import to Photos**. This screenshot shows an earlier build titled “Simulator Photos”; the current app is named **Simulator photos importer**.
+A standalone native macOS GUI to send images to **Photos** and PDFs or text documents to the selected simulators’ shared **Files → On My iPhone/iPad → Downloads** folder. Supports direct URLs, local file paths, drag and drop, and Base64 data URLs. No shell command is needed to use it.
 
 ## Download
 
-Download **Simulator photos importer.zip** from the [latest GitHub release](https://github.com/AhmedMHassaan/simulator-photos-importer/releases/latest). Unzip it, open the extracted folder, and move the app to Applications. The ZIP includes the app, README, and user guide. No terminal or rebuild is needed.
+Download **Simulator File Importer.zip** from the [latest GitHub release](https://github.com/AhmedMHassaan/simulator-file-importer/releases/latest). Unzip it, open the extracted folder, and move the app to Applications. The ZIP includes the app, README, step-by-step user guide, screenshot, and a complete Base64 image example.
 
-Requires macOS 13 or later, Xcode with an iOS simulator runtime installed, and at least one running simulator. Both Apple Silicon and Intel Macs are supported. The current build is locally signed and not Apple-notarized; see [Apple verification](#apple-verification) if macOS blocks it.
+Requires macOS 13 or later, Apple Silicon or Intel, and Xcode with an installed iOS simulator runtime and at least one running simulator. The build is locally signed and not Apple-notarized; see [Apple verification](#apple-verification) if macOS blocks it.
 
 ## Why this app exists
 
-When the new Device Hub does not support dragging and dropping image files into a simulator, this app provides a direct import workflow. Drag images into **Simulator photos importer**, select one or more running simulators, and add the images to their Photos libraries. This addresses the Device Hub limitation encountered in the original workflow; behavior may vary by Xcode version and setup.
+This utility addresses the workflow where Device Hub does not support dragging files into simulators. Drop files into this app instead, select the destination simulators, and import them. Device Hub behavior varies by Xcode version and setup; this app also provides multiple-destination imports, URL downloads, and Base64 decoding.
 
-## User guide
+## Interface example
 
-Read the [step-by-step user guide](USER_GUIDE.md) for installation, image URLs and file paths, drag and drop, simulator selection, importing, and troubleshooting. The portable ZIP includes this guide and the README alongside the app.
+![Earlier interface showing the input field, drop area, and selected iPhone simulator](docs/images/simulator-photos-importer-example.png)
 
-## Use the app
+This screenshot shows an earlier build titled “Simulator Photos”. The current app is named **Simulator File Importer**, accepts documents and Base64 data, and uses the **Import to simulators** button.
 
-1. Open **Simulator photos importer.app** (in `dist/` when using the source project).
-2. Start the simulators you want to use, then click **Refresh**.
-3. Paste an image URL or local file path and click **Add**, use **Choose images…**, or drag image files from Finder into the drop area. Multiple images are supported.
-4. Check the destination simulators and click **Import to Photos**.
-5. Open **Photos** inside each selected simulator to see the images.
+## Quick start
 
-The first successful refresh selects all currently running simulators. You can select any subset or deselect all. Matching simulator names are distinguished by runtime and device ID. Each image and destination gets its own success or failure result; failures do not prevent other imports.
+1. Open **Simulator File Importer.app** and start the simulators you want to use.
+2. Click **Refresh** to list running simulators.
+3. Paste a direct file URL, local path, or complete Base64 data URL and click **Add**. Alternatively, use **Choose files…** or drag files from Finder into the drop area.
+4. Check one or more destination simulators and click **Import to simulators**.
+5. Open **Photos** for images, or **Files → Browse → On My iPhone/iPad → Downloads** for documents.
 
-Images are registered using Apple’s `simctl addmedia`, which maintains the simulator’s Photos library correctly. This does not copy files into an individual app’s Documents directory. URLs must return an image directly; webpages and HTTP errors are rejected. Downloads are temporary and removed after import. Local originals remain untouched. Importing the same image again can create a duplicate in Photos.
+Read the [full user guide](USER_GUIDE.md) for installation, examples, Apple verification, and troubleshooting.
 
-## Move to another Mac
+## Supported formats and destinations
 
-Copy **Simulator photos importer.zip** (in `dist/` when using the source project) to the other Mac, unzip it, open the extracted folder, and move the app to Applications or another folder. No build, package manager, or terminal is needed to use it.
+| Input | Destination |
+| --- | --- |
+| Readable images, including PNG and JPEG | Simulator Photos library |
+| PDF | Files → On My iPhone/iPad → Downloads |
+| TXT, MD, CSV, JSON, XML, YAML, YML, LOG, RTF | Files → On My iPhone/iPad → Downloads |
+| Base64 image data URL, such as `data:image/png;base64,...` | Decoded locally and added to Photos |
+| Base64 PDF/text data URL, such as `data:application/pdf;base64,...` | Decoded locally and copied to Files → Downloads |
 
-- macOS 13 Ventura or later, Apple Silicon or Intel.
-- Xcode must be installed and its initial setup completed, with an iOS simulator runtime installed and at least one simulator running. Xcode Command Line Tools alone do not include iOS simulators.
-- The app uses that Mac’s active Xcode installation. If simulator discovery fails, open Xcode and check **Settings → Locations → Command Line Tools**.
-- This build is locally signed, without an Apple Developer ID or notarization. macOS may require explicit permission to open it after transfer. Public distribution without this prompt requires Developer ID signing and Apple notarization.
+Paste the full Base64 value, including its MIME type and `;base64,` prefix. [A complete PNG example is included](docs/examples/base64-image.txt). Whitespace and line breaks in the encoded data are supported. Bare Base64 strings without the data URL prefix are not supported.
+
+Supported text documents must be UTF-8 or UTF-16. Files are checked for readable image/PDF content or valid text; JSON and RTF also receive format checks. Executables, scripts, archives, app bundles, and folders are rejected. The format filter is not malware scanning or a guarantee that every accepted file is harmless. Files are copied without being executed or opened automatically.
+
+Each file and simulator pair receives its own result. Existing document filenames are preserved by adding a suffix, such as `report (2).pdf`. Reimporting images can create duplicates in Photos. Local originals remain untouched; temporary downloads and decoded files are cleaned up after each import.
+
+Documents use the simulator’s local Files provider. If the location is unavailable, open **Files → Browse → On My iPhone/iPad** in that simulator and retry. This storage layout may vary with simulator versions; failures are reported for the affected destination.
 
 ## Apple verification
 
 The current build is locally signed and is not Apple-notarized. If macOS blocks a trusted copy after transfer, try opening it once, then use **System Settings → Privacy & Security → Open Anyway** and confirm. See the [user guide’s Apple verification instructions](USER_GUIDE.md#apple-verification-when-opening-the-app) and [Apple’s guidance](https://support.apple.com/102445).
 
-For notarized distribution, the developer needs an Apple Developer Program membership, a **Developer ID Application** certificate, and a successful notarization submission followed by ticket stapling. The user guide explains this process and links to Apple’s documentation.
+For notarized distribution, the developer needs an Apple Developer Program membership, a **Developer ID Application** certificate, and a successful notarization submission followed by ticket stapling. The user guide explains the process and links to Apple’s documentation.
 
 ## Source and rebuilding
 
-Open `SimulatorPhotos.xcodeproj` in Xcode and build the **SimulatorPhotos** scheme, or run `Build.command` with XcodeBuildMCP installed. Release builds contain both `arm64` and `x86_64` code. There are no third-party runtime dependencies.
+Open `SimulatorPhotos.xcodeproj` in Xcode and build the **SimulatorPhotos** scheme, or run `Build.command` with XcodeBuildMCP installed. The internal project/module name is retained from the original photo-only version. Release builds contain both `arm64` and `x86_64` code, with no third-party runtime dependencies.
 
-`project.yml` is the XcodeGen source of the project; regenerate with `xcodegen generate` after changing it. `Tools/GenerateIcon.swift` creates the native icon artwork.
+`project.yml` is the XcodeGen project definition; regenerate with `xcodegen generate` after changing it. `Tools/GenerateIcon.swift` creates the native icon artwork.
 
-The test target checks file and URL parsing, simulator identity and filtering, image validation and copying, queue rules, and HTTP image/HTML/error responses using a local server. Set the test runner environment variable `SIMULATOR_PHOTOS_LIVE_TEST=1` to additionally import a small blue test image into the first running simulator.
+The test target covers URLs and paths, simulator identity, Base64 decoding, image/PDF/text validation, HTTP downloads and failures, queue deduplication, and copying documents without overwriting existing files. Set `SIMULATOR_PHOTOS_LIVE_TEST=1` in the test runner environment to additionally import images and a PDF into the first running simulator.
 
 ## Developer
 
-Developed by [Ahmed Mohamed Hassaan](https://www.linkedin.com/in/ahmedmhassaan/) · LinkedIn: @ahmedmhassaan.
+Developed by [Ahmed Mohamed Hassaan](https://www.linkedin.com/in/ahmedmhassaan/) · LinkedIn: **@ahmedmhassaan**.

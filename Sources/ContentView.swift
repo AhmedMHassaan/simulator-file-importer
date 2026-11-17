@@ -11,8 +11,8 @@ struct ContentView: View {
                 Image(systemName: "photo.on.rectangle.angled")
                     .font(.largeTitle).foregroundStyle(.tint)
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Simulator photos importer").font(.title2.bold())
-                    Text("Send images from your Mac or the web to Simulator’s Photos library.")
+                    Text("Simulator File Importer").font(.title2.bold())
+                    Text("Send images to Photos and documents to Files → Downloads.")
                         .foregroundStyle(.secondary)
                 }
             }
@@ -20,7 +20,7 @@ struct ContentView: View {
             GroupBox {
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
-                        TextField("Paste an image URL or file path", text: $model.input)
+                        TextField("Paste a URL, file path, or Base64 data URL", text: $model.input)
                             .textFieldStyle(.roundedBorder)
                             .onSubmit { model.addInput() }
                         Button("Add") { model.addInput() }
@@ -28,9 +28,9 @@ struct ContentView: View {
                     }
                     VStack(spacing: 8) {
                         Image(systemName: "square.and.arrow.down").font(.title2)
-                        Text("Drop images here").font(.headline)
-                        Button("Choose images…") { model.chooseFiles() }
-                        Text("Files stay on your Mac. URLs download only when you import.")
+                        Text("Drop images or documents here").font(.headline)
+                        Button("Choose files…") { model.chooseFiles() }
+                        Text("Files and Base64 data stay local. Web URLs download when you import.")
                             .font(.caption).foregroundStyle(.secondary)
                     }
                     .frame(maxWidth: .infinity).padding(18)
@@ -40,7 +40,7 @@ struct ContentView: View {
 
                     if !model.sources.isEmpty {
                         HStack {
-                            Text("\(model.sources.count) image(s) queued").font(.subheadline.bold())
+                            Text("\(model.sources.count) file(s) queued").font(.subheadline.bold())
                             Spacer()
                             Button("Clear") { model.sources = [] }.buttonStyle(.link)
                         }
@@ -48,9 +48,9 @@ struct ContentView: View {
                             LazyVStack(alignment: .leading, spacing: 8) {
                                 ForEach(model.sources) { source in
                                     HStack {
-                                        Image(systemName: source.url.isFileURL ? "photo" : "link").foregroundStyle(.secondary)
-                                        Text(source.url.isFileURL ? source.url.path : source.url.absoluteString)
-                                            .lineLimit(1).truncationMode(.middle).help(source.url.absoluteString)
+                                        Image(systemName: source.isEmbeddedData ? "doc.text" : (source.url.isFileURL ? "photo" : "link")).foregroundStyle(.secondary)
+                                        Text(source.displayLocation)
+                                            .lineLimit(1).truncationMode(.middle).help(source.displayLocation)
                                         Spacer()
                                         Button { model.sources.removeAll { $0.id == source.id } } label: {
                                             Image(systemName: "xmark.circle.fill")
@@ -136,7 +136,7 @@ struct ContentView: View {
                     Text("\(model.selected.count) simulator(s) selected").foregroundStyle(.secondary)
                 }
                 Spacer()
-                Button("Import to Photos") { Task { await model.importPhotos() } }
+                Button("Import to simulators") { Task { await model.importPhotos() } }
                     .buttonStyle(.borderedProminent).controlSize(.large)
                     .disabled(!model.canImport)
             }
@@ -168,7 +168,7 @@ struct ContentView: View {
                 else { url = nil }
                 Task { @MainActor in
                     if let url { model.add(url) }
-                    else { model.error = error?.localizedDescription ?? "This drop did not contain an image file or URL. Try Choose images instead." }
+                    else { model.error = error?.localizedDescription ?? "This drop did not contain a file or URL. Try Choose files instead." }
                 }
             }
         }

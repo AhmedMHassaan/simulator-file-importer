@@ -9,10 +9,14 @@
 /* Begin PBXBuildFile section */
 		24118897002809718399F66C /* AppIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 7D449700E8D9907F21D093DA /* AppIcon.icns */; };
 		378EA32A55F27BFD87A5EAA2 /* SimulatorPhotosTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34752B50DA0E1A1381C8C1BC /* SimulatorPhotosTests.swift */; };
+		4FC9730CEBE325F1BDCF169D /* Base64File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2815C42A79E49DB4359FF489 /* Base64File.swift */; };
+		72D5DF143749DDCDEB165890 /* base64-example.txt in Resources */ = {isa = PBXBuildFile; fileRef = B6398FF5711765A1FEC84F07 /* base64-example.txt */; };
 		7C5EF1866C0D3BC4E71DD2DD /* SimulatorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B89833A4DE174553C1251097 /* SimulatorService.swift */; };
 		81837A2A268DF1FBF6852E9E /* PhotoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195273FD0CF20C8C8E4CC3D8 /* PhotoModel.swift */; };
 		8EDA1FD1996C8FEB892A3D78 /* SimulatorPhotosApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62115D4848099734170E4AD8 /* SimulatorPhotosApp.swift */; };
+		C4F8EC00814849653FE020DB /* SafeFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD266E85916B354DF352B3EE /* SafeFile.swift */; };
 		C695AF5D40AEB39079593F43 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4379B9AFED92C5ADC348071B /* ContentView.swift */; };
+		F3C0C5269C01129E5CE19E70 /* FilesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11E43AA94F08DA368B644FF1 /* FilesService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -26,14 +30,18 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		11E43AA94F08DA368B644FF1 /* FilesService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilesService.swift; sourceTree = "<group>"; };
 		195273FD0CF20C8C8E4CC3D8 /* PhotoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoModel.swift; sourceTree = "<group>"; };
+		2815C42A79E49DB4359FF489 /* Base64File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Base64File.swift; sourceTree = "<group>"; };
 		34752B50DA0E1A1381C8C1BC /* SimulatorPhotosTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulatorPhotosTests.swift; sourceTree = "<group>"; };
 		3EFCFFA2D9B0CD41133A5943 /* SimulatorPhotos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SimulatorPhotos.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4379B9AFED92C5ADC348071B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		4B64CDCEBEEA9B9A088D7F28 /* SimulatorPhotosTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SimulatorPhotosTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		62115D4848099734170E4AD8 /* SimulatorPhotosApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulatorPhotosApp.swift; sourceTree = "<group>"; };
 		7D449700E8D9907F21D093DA /* AppIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = AppIcon.icns; sourceTree = "<group>"; };
+		B6398FF5711765A1FEC84F07 /* base64-example.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "base64-example.txt"; sourceTree = "<group>"; };
 		B89833A4DE174553C1251097 /* SimulatorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulatorService.swift; sourceTree = "<group>"; };
+		FD266E85916B354DF352B3EE /* SafeFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeFile.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -50,6 +58,7 @@
 			isa = PBXGroup;
 			children = (
 				34752B50DA0E1A1381C8C1BC /* SimulatorPhotosTests.swift */,
+				B297085A8C0E9D15CB5E24D1 /* Fixtures */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -64,6 +73,14 @@
 			);
 			sourceTree = "<group>";
 		};
+		B297085A8C0E9D15CB5E24D1 /* Fixtures */ = {
+			isa = PBXGroup;
+			children = (
+				B6398FF5711765A1FEC84F07 /* base64-example.txt */,
+			);
+			path = Fixtures;
+			sourceTree = "<group>";
+		};
 		BD80156493C2EF756680DE4D /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -75,8 +92,11 @@
 		BE1DCCD6784B3CE2D18507BE /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				2815C42A79E49DB4359FF489 /* Base64File.swift */,
 				4379B9AFED92C5ADC348071B /* ContentView.swift */,
+				11E43AA94F08DA368B644FF1 /* FilesService.swift */,
 				195273FD0CF20C8C8E4CC3D8 /* PhotoModel.swift */,
+				FD266E85916B354DF352B3EE /* SafeFile.swift */,
 				62115D4848099734170E4AD8 /* SimulatorPhotosApp.swift */,
 				B89833A4DE174553C1251097 /* SimulatorService.swift */,
 			);
@@ -91,6 +111,7 @@
 			buildConfigurationList = 208D69CAE0A1CA51500B4838 /* Build configuration list for PBXNativeTarget "SimulatorPhotosTests" */;
 			buildPhases = (
 				6B3546CFF17933EDBDD11695 /* Sources */,
+				50A92E0F3C3FA53161D3833C /* Resources */,
 			);
 			buildRules = (
 			);
@@ -160,6 +181,14 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		50A92E0F3C3FA53161D3833C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				72D5DF143749DDCDEB165890 /* base64-example.txt in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C31F208284513477C92EE5B2 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -183,8 +212,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4FC9730CEBE325F1BDCF169D /* Base64File.swift in Sources */,
 				C695AF5D40AEB39079593F43 /* ContentView.swift in Sources */,
+				F3C0C5269C01129E5CE19E70 /* FilesService.swift in Sources */,
 				81837A2A268DF1FBF6852E9E /* PhotoModel.swift in Sources */,
+				C4F8EC00814849653FE020DB /* SafeFile.swift in Sources */,
 				8EDA1FD1996C8FEB892A3D78 /* SimulatorPhotosApp.swift in Sources */,
 				7C5EF1866C0D3BC4E71DD2DD /* SimulatorService.swift in Sources */,
 			);
@@ -281,7 +313,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = local.simulatorphotos.app;
 				PRODUCT_MODULE_NAME = SimulatorPhotos;
-				PRODUCT_NAME = "Simulator photos importer";
+				PRODUCT_NAME = "Simulator File Importer";
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -299,7 +331,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = local.simulatorphotos.tests;
 				SDKROOT = macosx;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Simulator photos importer.app/Contents/MacOS/Simulator photos importer";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Simulator File Importer.app/Contents/MacOS/Simulator File Importer";
 			};
 			name = Debug;
 		};
@@ -377,7 +409,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = local.simulatorphotos.app;
 				PRODUCT_MODULE_NAME = SimulatorPhotos;
-				PRODUCT_NAME = "Simulator photos importer";
+				PRODUCT_NAME = "Simulator File Importer";
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -395,7 +427,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = local.simulatorphotos.tests;
 				SDKROOT = macosx;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Simulator photos importer.app/Contents/MacOS/Simulator photos importer";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Simulator File Importer.app/Contents/MacOS/Simulator File Importer";
 			};
 			name = Release;
 		};

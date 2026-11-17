@@ -11,16 +11,16 @@ xcodebuildmcp macos build \
   --derived-data-path "$PWD/build" \
   --extra-args 'ARCHS=arm64 x86_64' 'ONLY_ACTIVE_ARCH=NO'
 mkdir -p dist
-ditto 'build/Build/Products/Release/Simulator photos importer.app' 'dist/Simulator photos importer.app'
-codesign --verify --deep --strict 'dist/Simulator photos importer.app'
+ditto 'build/Build/Products/Release/Simulator File Importer.app' 'dist/Simulator File Importer.app'
+codesign --verify --deep --strict 'dist/Simulator File Importer.app'
 ditto README.md dist/README.md
 ditto USER_GUIDE.md dist/USER_GUIDE.md
-ditto docs/images dist/docs/images
-package_dir="$PWD/build/portable/Simulator photos importer"
+ditto docs dist/docs
+package_dir="$PWD/build/portable/Simulator File Importer"
 mkdir -p "$package_dir"
-ditto 'dist/Simulator photos importer.app' "$package_dir/Simulator photos importer.app"
+ditto 'dist/Simulator File Importer.app' "$package_dir/Simulator File Importer.app"
 ditto README.md "$package_dir/README.md"
 ditto USER_GUIDE.md "$package_dir/USER_GUIDE.md"
-ditto docs/images "$package_dir/docs/images"
-ditto -c -k --sequesterRsrc --keepParent "$package_dir" 'dist/Simulator photos importer.zip'
-print "Ready: $PWD/dist/Simulator photos importer.app"
+ditto docs "$package_dir/docs"
+ditto -c -k --sequesterRsrc --keepParent "$package_dir" 'dist/Simulator File Importer.zip'
+print "Ready: $PWD/dist/Simulator File Importer.app"

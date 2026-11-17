@@ -22,11 +22,11 @@ targets:
     info:
       path: Resources/Info.plist
       properties:
-        CFBundleDisplayName: Simulator photos importer
-        CFBundleName: Simulator photos importer
+        CFBundleDisplayName: Simulator File Importer
+        CFBundleName: Simulator File Importer
         CFBundleIconFile: AppIcon
-        CFBundleShortVersionString: '1.0'
-        CFBundleVersion: '1'
+        CFBundleShortVersionString: '1.1.0'
+        CFBundleVersion: '2'
         LSMinimumSystemVersion: '13.0'
         NSHighResolutionCapable: true
         NSHumanReadableCopyright: Developed by Ahmed Mohamed Hassaan
@@ -35,7 +35,7 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: local.simulatorphotos.app
-        PRODUCT_NAME: Simulator photos importer
+        PRODUCT_NAME: Simulator File Importer
         PRODUCT_MODULE_NAME: SimulatorPhotos
         ENABLE_APP_SANDBOX: NO
   SimulatorPhotosTests:
@@ -48,7 +48,7 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: local.simulatorphotos.tests
         GENERATE_INFOPLIST_FILE: YES
-        TEST_HOST: '$(BUILT_PRODUCTS_DIR)/Simulator photos importer.app/Contents/MacOS/Simulator photos importer'
+        TEST_HOST: '$(BUILT_PRODUCTS_DIR)/Simulator File Importer.app/Contents/MacOS/Simulator File Importer'
         BUNDLE_LOADER: '$(TEST_HOST)'
 schemes:
   SimulatorPhotos:

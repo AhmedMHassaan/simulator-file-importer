@@ -1,39 +1,35 @@
-# Simulator photos importer — User guide
+# Simulator File Importer — User guide
 
 Developed by [Ahmed Mohamed Hassaan](https://www.linkedin.com/in/ahmedmhassaan/) · LinkedIn: **@ahmedmhassaan**.
 
-Import images from your Mac or an image URL into the Photos library of one or more running iOS simulators, using a graphical interface.
-
-## Interface example
-
-![Simulator photos importer interface showing the image URL or file path input, drag-and-drop area, and a selected iPhone 17 simulator](docs/images/simulator-photos-importer-example.png)
-
-Example with one running simulator selected. Add images, choose the destination simulators, then click **Import to Photos**. This screenshot shows an earlier build titled “Simulator Photos”; the current app is named **Simulator photos importer**.
+Send images to the simulator’s **Photos library**, and PDFs or supported text documents to its shared **Files → On My iPhone/iPad → Downloads** folder, similar to Android’s shared Downloads folder.
 
 ## Why this app exists
 
-This utility addresses the workflow where the new Device Hub does not support dragging and dropping image files into a simulator. Instead, drop files into **Simulator photos importer**, select the running simulators, and import the images into their Photos libraries. You can also choose files or paste an image URL or local file path.
+When Device Hub does not support dragging and dropping files into a simulator in your setup, use this utility to import them. Drag and drop into this app is supported. Device Hub behavior can vary by Xcode version; this app additionally supports multiple destination simulators, direct file URLs, and Base64 data URLs.
 
-This describes the Device Hub limitation encountered in the original workflow; behavior may differ between Xcode versions and setups. Drag and drop into this utility is supported.
+## Interface example
 
-## 1. What you need
+![Earlier interface showing the input field, drop area, and selected simulator](docs/images/simulator-photos-importer-example.png)
 
-- A Mac running macOS 13 Ventura or later. Intel and Apple Silicon Macs are supported.
-- Xcode installed, opened at least once, with initial setup completed.
-- An iOS simulator runtime installed through Xcode.
+This screenshot shows an earlier photo-only build titled “Simulator Photos”. The current app is named **Simulator File Importer**, also accepts documents and Base64 data, and has an **Import to simulators** button.
+
+## 1. Requirements
+
+- macOS 13 Ventura or later, on an Intel or Apple Silicon Mac.
+- Xcode installed and opened at least once, with initial setup completed and an iOS simulator runtime installed.
 - At least one running simulator.
 
-You do not need Terminal, the `simphoto` command, or any other project to use the app. Xcode Command Line Tools alone do not include the iOS Simulator.
+Xcode Command Line Tools alone do not include iOS simulators. No Terminal, shell configuration, or other project is required to use this app.
 
 ## 2. Install and open
 
-1. Copy **Simulator photos importer.zip** to your Mac.
-2. Double-click the ZIP to extract it.
-3. Open the extracted **Simulator photos importer** folder. It contains the app, this guide, and the README.
-4. Drag **Simulator photos importer.app** into your **Applications** folder, or keep it in another folder of your choice.
-5. Double-click the app to open it.
+1. Download **Simulator File Importer.zip** from the [latest release](https://github.com/AhmedMHassaan/simulator-file-importer/releases/latest).
+2. Double-click the ZIP to extract it, then open the extracted **Simulator File Importer** folder.
+3. Move **Simulator File Importer.app** to Applications or another folder of your choice.
+4. Double-click the app.
 
-This build is locally signed and is not Apple-notarized. macOS may ask you to explicitly allow it to open after transfer.
+The ZIP also contains this guide, README, screenshot, and a complete Base64 example. macOS may require approval after transfer because this build is not Apple-notarized.
 
 ## Apple verification when opening the app
 
@@ -41,7 +37,7 @@ The downloadable build is locally signed and has not been notarized by Apple. On
 
 If you trust the copy you received:
 
-1. Try opening **Simulator photos importer.app** once, then dismiss the warning.
+1. Try opening **Simulator File Importer.app** once, then dismiss the warning.
 2. Open **System Settings → Privacy & Security**.
 3. Find the blocked-app message and click **Open Anyway**.
 4. Confirm that you want to open the app, authenticating if asked.
@@ -57,102 +53,114 @@ For a developer to distribute an Apple-notarized build:
 
 Notarization does not require publishing the app in the Mac App Store. See [Apple’s notarization documentation](https://developer.apple.com/documentation/security/notarizing-macos-software-before-distribution).
 
-## 3. Start your simulators
+## 3. Start and select simulators
 
-1. Open Xcode.
-2. Use **Xcode → Open Developer Tool → Simulator** to open Simulator.
-3. In Simulator, use **File → Open Simulator** to start the devices you want to use.
-4. Wait until each device finishes starting.
-5. Return to Simulator photos importer and click **Refresh**.
+1. Open Xcode, then choose **Xcode → Open Developer Tool → Simulator**.
+2. In Simulator, use **File → Open Simulator** to start the devices you need. Wait for them to boot.
+3. In Simulator File Importer, click **Refresh**.
+4. Check the destination simulators. Use **Select all** or **Deselect all** as needed.
 
-Only running simulators appear in the list. If you start or close another simulator, click **Refresh** again.
+Only running simulators appear. Refresh again after starting or closing devices. The first successful refresh selects the running simulators; review the checkboxes before importing. Devices with identical names are distinguished by runtime and short device ID.
 
-## 4. Add images
+## 4. Add files
 
-You can combine all three methods in one import.
+You can combine any of these methods in the same queue.
 
-### Choose image files
+### Choose files
 
-1. Click **Choose images…**.
-2. Select one or more images from your Mac. Hold Command to select multiple files.
-3. Click **Add images**.
-
-You can also press **Command + O** to open the file chooser.
+Click **Choose files…**, select one or more supported images or documents, then click **Add files**. Hold Command to select several files. **Command + O** also opens the chooser.
 
 ### Drag and drop
 
-Drag one or more image files from Finder onto **Drop images here**. Their file paths appear in the queue automatically; you do not need to copy the paths yourself.
+Drag files from Finder onto **Drop images or documents here**. Their paths appear automatically in the queue. Folders and app bundles are not supported.
 
-### Paste a file path
+### Paste a local path
 
-Paste a local path into the input field, then click **Add** or press Return.
-
-Examples:
+Paste a path, then click **Add** or press Return:
 
 ```text
 /Users/yourname/Pictures/sample photo.png
-~/Pictures/sample photo.jpg
-file:///Users/yourname/Pictures/sample%20photo.png
+~/Downloads/report.pdf
+file:///Users/yourname/Downloads/notes.txt
 ```
 
 Paths containing spaces are supported. Use a normal Finder path rather than a shell-escaped path.
 
-### Paste an image URL
+### Paste a direct URL
 
-Paste a direct `https://` or `http://` image URL and click **Add** or press Return.
+Paste an `https://` or `http://` URL that returns a supported image or document, then click **Add**. A webpage containing a file, a sign-in page, or an image search page will not work. Downloads happen when you import, so network access is needed at that time. Custom sign-in flows and authentication headers are not supported.
 
-For example, a URL ending in `/photo.jpg` can work if it returns an actual image. A webpage containing an image, a sign-in page, or an image search results page will not work. URLs do not have to end in an image extension, but their response must be a readable image.
+### Paste Base64 data
 
-The app downloads URL images when you click **Import to Photos**. You will need network access to the image host at that time. The app does not provide a sign-in flow or custom authentication headers for protected URLs.
+Paste a complete Base64 **data URL**, then click **Add**. Examples of prefixes:
+
+```text
+data:image/png;base64,...
+data:image/jpeg;base64,...
+data:application/pdf;base64,...
+data:text/plain;base64,...
+data:application/json;base64,...
+```
+
+Replace `...` with the complete encoded file contents; an ellipsis is not valid image or document data. The MIME type and `;base64,` prefix are required. [Open the included complete PNG example](docs/examples/base64-image.txt), copy its entire contents, and paste it into the app to try it.
+
+The app accepts line breaks and whitespace within the Base64 payload. Embedded files decode locally, without a network request. A readable label appears in the queue rather than the long encoded string. Invalid Base64 or decoded file content produces an error for that item. Bare Base64 strings without the data URL prefix are not supported.
 
 ### Review the queue
 
-- Check the queued file paths and URLs before importing.
-- Click the **×** beside an entry to remove it.
-- Click **Clear** to empty the queue.
-- Adding the exact same file path or URL again does not add another queue entry.
+- Remove an entry with the **×** button, or use **Clear** to empty the queue.
+- Adding the same path, URL, or normalized Base64 value again does not duplicate the queue entry.
+- Queue deduplication does not check whether the file was imported in an earlier operation.
 
-## 5. Select the destination simulators
+## 5. Supported formats
 
-Use the checkbox beside each simulator to choose where the images should go.
+| Format | Destination |
+| --- | --- |
+| Readable images, including PNG/JPEG | Photos library |
+| PDF | Shared Files Downloads folder |
+| TXT, MD, CSV, JSON, XML, YAML, YML, LOG, RTF | Shared Files Downloads folder |
+| Base64 data URLs for those formats | Same destination as the decoded file |
 
-- **Select all** chooses every listed simulator.
-- **Deselect all** clears the selection.
-- Check any combination to import into several simulators in one operation.
-- The runtime and short device ID help distinguish devices with the same name.
+Text documents must be UTF-8 or UTF-16. JSON and RTF also receive format checks. Executables, scripts, archives, app bundles, and directories are rejected. This is a format filter, not malware scanning or a guarantee that a file is harmless. The importer does not execute or automatically open imported files.
 
-The first successful refresh selects the currently running simulators. Review the checkboxes before importing. At least one queued image and one selected simulator are required to enable **Import to Photos**.
+## 6. Import and find your files
 
-## 6. Import and view the images
+1. Add at least one file and check at least one simulator.
+2. Click **Import to simulators** and wait for the progress message to finish.
+3. Review each result. A failure for one file or simulator does not prevent the others from being attempted.
+4. For images, open **Photos** inside the selected simulator.
+5. For PDFs and other documents, open **Files → Browse → On My iPhone/iPad → Downloads** inside the selected simulator.
 
-1. Click **Import to Photos**.
-2. Wait for the progress message to finish.
-3. Review the results. Each image and simulator pair receives a success or failure result. An image that cannot be prepared receives an error before any simulator import is attempted for that image.
-4. Open the **Photos** app inside each selected simulator to view the imported images.
+For example, importing two valid files into three selected simulators produces six destination results.
 
-For example, two images imported into three selected simulators produce six destination results if both images can be prepared successfully.
+Documents go into a shared Downloads folder, not an individual app’s private Documents directory. Apps can select them through a document picker that exposes the Files app. The Files provider may need to be opened once on a new simulator: open **Files → Browse → On My iPhone/iPad**, then retry the import if needed.
 
-The files are added to the simulator’s Photos library. They are not copied into an individual app’s Documents folder. Original files on your Mac remain unchanged. Temporary downloads are cleaned up after import. The queue remains available after importing; importing it again may create duplicate photos.
+Existing documents are preserved. A duplicate filename receives a number, such as `report (2).pdf`. Reimporting images can create duplicates in Photos. Local originals are unchanged. Downloaded and decoded temporary files are removed after the operation. The queue remains available for another import.
 
 ## 7. Troubleshooting
 
 | Problem | What to try |
 | --- | --- |
 | No simulators appear | Start a simulator, wait for it to boot, then click **Refresh**. |
-| The simulator tools cannot be found | Open Xcode and complete setup. In **Xcode → Settings → Locations**, check that **Command Line Tools** points to your installed Xcode. |
-| **Import to Photos** is disabled | Add at least one image and check at least one simulator. Wait for any current refresh or import to finish. |
-| A file cannot be read | Confirm the image exists. Use **Choose images…** to select it again, especially if it was moved or renamed. |
-| A URL fails to download | Check network access and use a direct image URL that opens without signing in. |
-| A response is not a readable image | The URL may return HTML or an unsupported/corrupt file. Try a valid PNG or JPEG image. |
-| One destination fails | Confirm that simulator is still running. Click **Refresh**, select it, and retry. Successful destinations may receive duplicates if selected again. |
-| An operation times out | Check that the simulator responds normally, refresh the list, and retry. |
-| An image is missing from your app’s file browser | Open **Photos** inside the simulator. Imports go to the Photos library, not your app’s Documents folder. |
+| Simulator tools cannot be found | Complete Xcode setup. Check **Xcode → Settings → Locations → Command Line Tools** points to your installed Xcode. |
+| **Import to simulators** is disabled | Queue a file and select at least one simulator. Wait for the current refresh/import to finish. |
+| A local file cannot be read | Confirm it exists and choose it again, especially if it was moved or renamed. |
+| URL download fails | Check network access and use a direct file URL that does not require sign-in. |
+| Base64 is invalid | Paste the full `data:<MIME type>;base64,<payload>` value. Do not include an ellipsis or truncate it. |
+| A format is unsupported | Use a readable image, PDF, or a listed text format. Renaming an executable to a document extension does not make it supported. |
+| PDF/text validation fails | Check the file opens correctly. For text, use UTF-8/UTF-16; JSON and RTF must have valid formatting. |
+| Files provider is unavailable | Open **Files → Browse → On My iPhone/iPad** on that simulator once, then retry. Simulator storage behavior can vary by runtime. |
+| Documents do not appear immediately | Reopen the Downloads folder in Files; confirm the import result succeeded for that simulator. |
+| One simulator fails | Make sure it is still running, refresh the list, and retry only the necessary destinations. |
+| An operation times out | Check that the simulator responds normally, refresh, and retry. |
+| An image is missing from Downloads | Images are imported into **Photos**. Documents are copied to **Files → Downloads**. |
 
 ## 8. Share with another Mac
 
-Send **Simulator photos importer.zip** to the other Mac and follow the installation steps above. No rebuilding is needed. The other Mac must meet the requirements in section 1. The utility discovers the simulators on that Mac; it does not transfer simulator devices or runtimes from your original Mac.
+Send **Simulator File Importer.zip** to the other Mac and follow section 2. No rebuild is needed. That Mac must meet the requirements in section 1. The app discovers that Mac’s own running simulators; it does not transfer simulator devices or runtimes.
 
 ## Developer
 
 **Developed by Ahmed Mohamed Hassaan**
+
 LinkedIn: [@ahmedmhassaan](https://www.linkedin.com/in/ahmedmhassaan/)

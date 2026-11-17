@@ -42,10 +42,10 @@ final class PhotoModel: ObservableObject {
 
     func chooseFiles() {
         let panel = NSOpenPanel()
-        panel.allowedContentTypes = [.image]
+        panel.allowedContentTypes = SafeFile.chooserTypes
         panel.allowsMultipleSelection = true
         panel.canChooseDirectories = false
-        panel.prompt = "Add images"
+        panel.prompt = "Add files"
         panel.begin { response in
             guard response == .OK else { return }
             Task { @MainActor in panel.urls.forEach { self.add($0) } }
@@ -87,7 +87,7 @@ final class PhotoModel: ObservableObject {
         do {
             try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
             for (index, source) in queue.enumerated() {
-                progress = "Preparing image \(index + 1) of \(queue.count)…"
+                progress = "Preparing file \(index + 1) of \(queue.count)…"
                 let file: URL
                 do {
                     // Downloading and decoding run away from the UI actor.
@@ -99,8 +99,15 @@ final class PhotoModel: ObservableObject {
                 for device in targets {
                     progress = "Importing \(index + 1) of \(queue.count) → \(device.name)…"
                     do {
-                        try await SimulatorService.importImage(file, to: device)
-                        results.append(ImportResult(title: "\(source.title) → \(device.name)", detail: "Added to Photos · \(device.runtime) · \(device.id.prefix(8))", succeeded: true))
+                        let destination: String
+                        if SafeFile.isImage(file) {
+                            try await SimulatorService.importImage(file, to: device)
+                            destination = "Added to Photos"
+                        } else {
+                            let saved = try await FilesService.importDocument(file, named: source.title, to: device)
+                            destination = "Saved to Files → On My iPhone/iPad → Downloads → \(saved.lastPathComponent)"
+                        }
+                        results.append(ImportResult(title: "\(source.title) → \(device.name)", detail: "\(destination) · \(device.runtime) · \(device.id.prefix(8))", succeeded: true))
                     } catch {
                         results.append(ImportResult(title: "\(source.title) → \(device.name)", detail: error.localizedDescription, succeeded: false))
                     }

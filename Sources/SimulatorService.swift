@@ -15,18 +15,31 @@ struct SimulatorDevice: Identifiable, Decodable, Equatable {
 struct PhotoSource: Identifiable, Equatable {
     let id = UUID()
     let url: URL
-    var title: String { url.lastPathComponent.isEmpty ? url.absoluteString : url.lastPathComponent }
+    var isEmbeddedData: Bool { url.scheme?.lowercased() == "data" }
+    var isBase64Image: Bool { url.absoluteString.prefix(11).lowercased() == "data:image/" }
+    var title: String {
+        isEmbeddedData ? (isBase64Image ? "Base64 image" : "Base64 file") : (url.lastPathComponent.isEmpty ? url.absoluteString : url.lastPathComponent)
+    }
+    var displayLocation: String {
+        if isEmbeddedData { return "\(title) · embedded file data" }
+        return url.isFileURL ? url.path : url.absoluteString
+    }
 
     static func parse(_ input: String) throws -> PhotoSource {
         var value = input.trimmingCharacters(in: .whitespacesAndNewlines)
         if value.hasPrefix("\"") && value.hasSuffix("\"") || value.hasPrefix("'") && value.hasSuffix("'") {
             value = String(value.dropFirst().dropLast())
         }
-        guard !value.isEmpty else { throw PhotoError.message("Enter an image URL or a local file path.") }
+        guard !value.isEmpty else { throw PhotoError.message("Enter a URL, file path, or Base64 data URL.") }
+        if value.prefix(5).lowercased() == "data:" {
+            let image = try Base64File(value)
+            guard let url = image.normalizedURL else { throw PhotoError.message("The Base64 data URL is invalid.") }
+            return PhotoSource(url: url)
+        }
         if let url = URL(string: value), let scheme = url.scheme?.lowercased() {
             if ["http", "https"].contains(scheme), url.host != nil { return PhotoSource(url: url) }
             if scheme == "file" { return PhotoSource(url: url) }
-            throw PhotoError.message("Use an http:// or https:// image URL, or a local file path.")
+            throw PhotoError.message("Use an http:// or https:// URL, a local file path, or a supported Base64 data URL.")
         }
         return PhotoSource(url: URL(fileURLWithPath: (value as NSString).expandingTildeInPath))
     }
@@ -39,7 +52,7 @@ enum PhotoError: LocalizedError {
 
 /// Runs Apple's tool directly with separate arguments; user input is never evaluated by a shell.
 enum AppleTool {
-    static func run(_ arguments: [String], timeout: TimeInterval = 45) async throws -> Data {
+    static func run(_ arguments: [String], executable: String = "/usr/bin/xcrun", timeout: TimeInterval = 45) async throws -> Data {
         try await withCheckedThrowingContinuation { continuation in
             DispatchQueue.global(qos: .userInitiated).async {
                 let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
@@ -51,7 +64,7 @@ enum AppleTool {
                     let handle = try FileHandle(forWritingTo: output)
                     defer { try? handle.close() }
                     let process = Process()
-                    process.executableURL = URL(fileURLWithPath: "/usr/bin/xcrun")
+                    process.executableURL = URL(fileURLWithPath: executable)
                     process.arguments = arguments
                     process.standardOutput = handle
                     process.standardError = handle
@@ -117,9 +130,13 @@ enum SimulatorService {
 
     static func prepare(_ source: PhotoSource, in directory: URL) async throws -> URL {
         let local: URL
-        if source.url.isFileURL {
+        if source.isEmbeddedData {
+            let image = try Base64File(source.url.absoluteString)
+            local = directory.appendingPathComponent("Base64-file-\(UUID().uuidString)").appendingPathExtension(SafeFile.extensionForMediaType(image.mediaType) ?? "dat")
+            try image.decodedData().write(to: local, options: .atomic)
+        } else if source.url.isFileURL {
             guard FileManager.default.isReadableFile(atPath: source.url.path) else {
-                throw PhotoError.message("Cannot read “\(source.url.path)”. Choose an existing image file.")
+                throw PhotoError.message("Cannot read “\(source.url.path)”. Choose an existing file.")
             }
             local = source.url
         } else {
@@ -128,13 +145,16 @@ enum SimulatorService {
             let (download, response) = try await URLSession.shared.download(for: request)
             guard let response = response as? HTTPURLResponse, (200...299).contains(response.statusCode) else {
                 try? FileManager.default.removeItem(at: download)
-                throw PhotoError.message("The image URL returned an unsuccessful response.")
+                throw PhotoError.message("The file URL returned an unsuccessful response.")
             }
-            let destination = directory.appendingPathComponent(UUID().uuidString)
+            let fileExtension = SafeFile.extensionForMediaType(response.mimeType ?? "")
+                ?? response.suggestedFilename.map { ($0 as NSString).pathExtension }
+                ?? source.url.pathExtension
+            let destination = directory.appendingPathComponent(UUID().uuidString).appendingPathExtension(fileExtension)
             try FileManager.default.moveItem(at: download, to: destination)
             local = destination
         }
-        let ext = try validateImage(local)
+        let ext = try SafeFile.validatedExtension(local)
         let destination = directory.appendingPathComponent(UUID().uuidString).appendingPathExtension(ext)
         try FileManager.default.copyItem(at: local, to: destination)
         return destination
