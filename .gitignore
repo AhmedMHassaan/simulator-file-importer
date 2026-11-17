@@ -1,0 +1,16 @@
+# Generated builds and portable release artifacts
+build/
+dist/
+
+# Local macOS and Xcode state
+.DS_Store
+**/xcuserdata/
+*.xcuserstate
+.swiftpm/
+
+# Local credentials and signing material
+.env
+.env.*
+*.p12
+*.p8
+*.mobileprovision
